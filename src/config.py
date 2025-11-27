@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     # vLLM 서버 설정
     vllm_base_url: str = "http://localhost:8000"
     vllm_api_key: str = ""
-    vllm_model: str = "meta-llama/Llama-2-7b-chat-hf"
+    vllm_model: str = "microsoft/Phi-3-mini-4k-instruct"
 
     # 배치 처리 설정
     batch_max_size: int = 32  # vLLM의 continuous batching 활용
