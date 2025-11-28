@@ -51,4 +51,3 @@ class HealthResponse(BaseModel):
     status: str
     vllm_connected: bool
     model: str
-    batch_enabled: bool
