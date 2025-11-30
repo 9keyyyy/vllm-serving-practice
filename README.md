@@ -77,3 +77,13 @@ llm-serving-practice/
 └── notebooks/
     └── 01_vllm_setup.ipynb      # vllm server (Colab)
 ```
+
+
+### TODO
+- [x] vLLM 서버 세팅
+- [x] FastAPI 서버 세팅 및 모델 연동 확인
+- [x] KServe 서빙
+- [ ] continuos batch 성능 평가
+- [ ] Prometheus + Grafana 모니터링
+- [ ] LangChain Agent 구현
+- [ ] 클라우드 환경 GPU 활용 vLLM 서버 세팅
