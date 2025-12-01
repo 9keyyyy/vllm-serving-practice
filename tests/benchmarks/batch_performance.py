@@ -169,18 +169,15 @@ async def main():
     print("SUMMARY")
     print("=" * 60)
 
-    # 순차 처리 추정치
-    single_time_estimated = single_time * (n_requests / 20)
-
-    print(f"Single requests (est): {single_time_estimated:.2f}s (baseline)")
+    print(f"Single requests (est): {single_time:.2f}s (baseline)")
     print(
-        f"Concurrent requests:   {concurrent_time:.2f}s ({single_time_estimated / concurrent_time:.2f}x faster)"
+        f"Concurrent requests:   {concurrent_time:.2f}s ({single_time / concurrent_time:.2f}x faster)"
     )
     print(
-        f"Explicit batch:        {batch_time:.2f}s ({single_time_estimated / batch_time:.2f}x faster)"
+        f"Explicit batch:        {batch_time:.2f}s ({single_time / batch_time:.2f}x faster)"
     )
     print(
-        f"Batch handler:         {handler_time:.2f}s ({single_time_estimated / handler_time:.2f}x faster)"
+        f"Batch handler:         {handler_time:.2f}s ({single_time / handler_time:.2f}x faster)"
     )
 
 
