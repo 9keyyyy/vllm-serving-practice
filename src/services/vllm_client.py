@@ -42,7 +42,7 @@ class VLLMClient:
                 id=request_id or completion.id,
                 response=completion.choices[0].message.content,
                 model=completion.model,
-                usage=completion.usage.model_dump(),
+                usage=completion.usage.model_dump(exclude_none=True),
                 latency_ms=latency_ms,
             )
 
