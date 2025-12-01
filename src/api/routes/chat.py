@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from src.api.main import get_batch_handler, get_vllm_client
+from src.api.dependencies import get_batch_handler, get_vllm_client
 from src.models.schemas import ChatRequest, ChatResponse
 from src.services.batch_handler import BatchHandler
 from src.services.vllm_client import VLLMClient

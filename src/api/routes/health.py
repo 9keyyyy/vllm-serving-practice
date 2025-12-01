@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from src.api.main import get_vllm_client
+from src.api.dependencies import get_vllm_client
 from src.config import settings
 from src.models.schemas import HealthResponse
 from src.services.vllm_client import VLLMClient
