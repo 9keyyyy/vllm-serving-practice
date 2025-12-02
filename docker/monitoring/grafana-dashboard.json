@@ -175,7 +175,7 @@
       {
         "id": 6,
         "title": "HTTP Status Codes",
-        "type": "piechart",
+        "type": "table",
         "datasource": {
           "type": "prometheus",
           "uid": "prometheus"
@@ -183,9 +183,9 @@
         "targets": [
           {
             "expr": "sum by (status) (http_requests_total)",
-            "legendFormat": "{{status}}",
-            "refId": "A",
-            "format": "table"
+            "format": "table",
+            "instant": true,
+            "refId": "A"
           }
         ],
         "gridPos": {
@@ -194,25 +194,23 @@
           "x": 12,
           "y": 16
         },
-        "options": {
-          "legend": {
-            "displayMode": "visible",
-            "values": ["value"]
-          },
-          "pieType": "pie",
-          "tooltip": {
-            "mode": "single"
-          },
-          "reduceOptions": {
-            "values": false,
-            "calcs": ["lastNotNull"],
-            "fields": ""
-          }
-        },
         "fieldConfig": {
           "defaults": {
-            "custom": {}
-          }
+            "custom": {
+              "align": "auto",
+              "displayMode": "auto"
+            }
+          },
+          "overrides": []
+        },
+        "options": {
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": true,
+              "displayName": "Value"
+            }
+          ]
         }
       }
     ]
