@@ -187,7 +187,7 @@ Avg batch size: 25.00
 ============================================================
 SUMMARY
 ============================================================
-Single requests (est): 129.05s (baseline)
+Single requests : 129.05s (baseline)
 Concurrent requests:   11.41s (11.31x faster)
 Explicit batch:        11.45s (11.27x faster)
 Batch handler:         17.89s (7.21x faster)
