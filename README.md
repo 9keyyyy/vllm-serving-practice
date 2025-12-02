@@ -82,7 +82,7 @@ llm-serving-practice/
 
 > vLLM Continuous Batching을 검증하고, 실제 프로덕션 환경을 위한 자동 배치 시스템 설계
 
-### Flow
+### 처리 플로우
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -128,13 +128,76 @@ llm-serving-practice/
 | 처리 방식 | 소요 시간 | Throughput  | 성능 개선 |
 |---------|---------|------------|---------|
 | 순차 처리 (Baseline) | 129.05s | 0.39 req/s  | 1.0x |
-| **동시 요청 ** | 11.41s | 4.38 req/s  | **11.3x** ⬆️ |
+| **동시 요청** | 11.41s | 4.38 req/s  | **11.3x** ⬆️ |
 | 명시적 배치 | 11.45s | 4.37 req/s  | 11.3x |
-| **BatchHandler ** | 17.89s | 2.80 req/s  | **7.2x** ⬆️ |
+| **BatchHandler** | 17.89s | 2.80 req/s  | **7.2x** ⬆️ |
+
+<details>
+<summary><b>상세 결과</b></summary>
+
+```
+✅ vLLM server connected
+
+============================================================
+
+📊 Generated 50 varied requests
+   Token range: 10-150 tokens
+
+=== Single Requests Benchmark (n=50) ===
+Request 10/50 completed
+Request 20/50 completed
+Request 30/50 completed
+Request 40/50 completed
+Request 50/50 completed
+
+Results:
+Total time: 129.05s
+Throughput: 0.39 req/s
+Avg latency: 2.58s
+P50 latency: 1.37s
+P95 latency: 5.45s
+
+=== Concurrent Requests Benchmark (n=50) ===
+
+Results:
+Total time: 11.41s
+Throughput: 4.38 req/s
+Avg latency: 5.43s
+P50 latency: 4.85s
+P95 latency: 10.74s
+
+=== Explicit Batch Benchmark (n=50) ===
+
+Results:
+Total time: 11.45s
+Throughput: 4.37 req/s
+Avg latency: 5.15s
+
+=== Batch Handler Benchmark (n=50) ===
+
+Results:
+Total time: 17.89s
+Throughput: 2.80 req/s
+
+Batch Stats:
+Total requests: 50
+Total batches: 2
+Avg batch size: 25.00
+
+============================================================
+SUMMARY
+============================================================
+Single requests (est): 129.05s (baseline)
+Concurrent requests:   11.41s (11.31x faster)
+Explicit batch:        11.45s (11.27x faster)
+Batch handler:         17.89s (7.21x faster)
+```
+
+</details>
+
 ### 검증 결과 
 - vLLM Continuous Batching: 11.3배의 처리량 향상을 제공
 - BatchHandler: 7.2배의 처리량 향상을 제공 및 50개 요청을 2회 배치 처리로 완료
-  
 
 ### 핵심 구현: BatchHandler
 실제 프로덕션 환경에서는 요청이 순차적으로 도착하기 때문에, BatchHandler는 이런 환경에서도 자동으로 요청을 수집하여 배치 처리 효과를 얻을 수 있도록 설계
@@ -185,22 +248,20 @@ async def _process_batch(self):
 
 
 ### Application Layer (BatchHandler)
-여러 개별 요청을 자동으로 수집하여 하나의 배치로 통합
+> 여러 개별 요청을 자동으로 수집하여 하나의 배치로 통합
 
-**효과**
 - API 호출 횟수 감소 (50회 → 2회)
 - 네트워크 오버헤드 최소화
 - 개발자는 단일 요청 API 사용 (추상화)
 
 ### Engine Layer (vLLM Continuous Batching)
-배치로 전달된 요청들을 GPU에서 병렬 처리
+> 배치로 전달된 요청들을 GPU에서 병렬 처리
 
-**효과**
 - 다양한 토큰 길이(10~150) 동시 처리
 - 짧은 요청 완료 후에도 긴 요청 계속 실행
 - GPU 유휴 시간 최소화로 처리량 극대화
 
-### 통합 효과
+### Application Layer + Engine Layer
 ```
 BatchHandler
   └─→ 요청 자동 수집 및 배치 형성
