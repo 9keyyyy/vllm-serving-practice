@@ -4,6 +4,7 @@ import time
 from collections import deque
 from typing import Dict
 
+from src.api.middleware.metrics import record_batch_metrics
 from src.config import settings
 from src.models.schemas import ChatRequest, ChatResponse
 from src.services.vllm_client import VLLMClient
@@ -79,6 +80,11 @@ class BatchHandler:
             start_time = time.perf_counter()
             responses = await self.client.batch_chat_completion(batch)
             total_time = (time.perf_counter() - start_time) * 1000
+
+            # 📊 메트릭 기록
+            record_batch_metrics(
+                batch_size=batch_size, duration_seconds=total_time / 1000
+            )
 
             # 통계 업데이트
             self._stats["total_batches"] += 1

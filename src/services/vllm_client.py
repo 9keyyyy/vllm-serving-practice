@@ -5,6 +5,7 @@ from typing import List, Optional
 
 from openai import AsyncOpenAI
 
+from src.api.middleware.metrics import record_vllm_metrics
 from src.config import settings
 from src.models.schemas import ChatRequest, ChatResponse
 
@@ -38,6 +39,9 @@ class VLLMClient:
 
             latency_ms = (time.perf_counter() - start_time) * 1000
 
+            # 📊 메트릭 기록 - 성공
+            record_vllm_metrics(success=True, latency_seconds=latency_ms / 1000)
+
             return ChatResponse(
                 id=request_id or completion.id,
                 response=completion.choices[0].message.content,
@@ -47,6 +51,11 @@ class VLLMClient:
             )
 
         except Exception as e:
+            latency_ms = (time.perf_counter() - start_time) * 1000
+
+            # 📊 메트릭 기록 - 실패
+            record_vllm_metrics(success=False, latency_seconds=latency_ms / 1000)
+
             logger.error(f"vLLM request failed: {e}")
             raise
 

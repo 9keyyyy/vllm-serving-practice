@@ -169,7 +169,7 @@ async def main():
     print("SUMMARY")
     print("=" * 60)
 
-    print(f"Single requests (est): {single_time:.2f}s (baseline)")
+    print(f"Single requests: {single_time:.2f}s (baseline)")
     print(
         f"Concurrent requests:   {concurrent_time:.2f}s ({single_time / concurrent_time:.2f}x faster)"
     )

@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-# from src.api.middleware.metrics import MetricsMiddleware
+from src.api.middleware.metrics import MetricsMiddleware, get_metrics
 from src.api.routes import batch, chat, health
 from src.config import settings
 from src.services.batch_handler import BatchHandler
@@ -50,8 +50,8 @@ app.add_middleware(
 )
 
 # Prometheus metrics
-# if settings.enable_metrics:
-#     app.add_middleware(MetricsMiddleware)
+if settings.enable_metrics:
+    app.add_middleware(MetricsMiddleware)
 
 app.include_router(chat.router, prefix="/api/v1", tags=["chat"])
 app.include_router(batch.router, prefix="/api/v1", tags=["batch"])
@@ -65,3 +65,8 @@ async def root():
         "version": "0.1.0",
         "vllm_model": settings.vllm_model,
     }
+
+
+@app.get("/metrics")
+async def metrics():
+    return get_metrics()
