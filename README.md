@@ -1,7 +1,7 @@
 # vllm-serving-practice
 
 ## 현 시스템 아키텍처
-로컬 환경(Macbook Pro M4)에서의 테스트를 용이하게 하기 위해 아래처럼 구성 -> 추후 고도화 예정
+> 클라우드 GPU 마이그레이션 예정
 ```
    ┌───────────────────────────────┐
    │           Internet            │
@@ -43,11 +43,13 @@ llm-serving-practice/
 ├── docker/
 │   ├── Dockerfile.api      # FastAPI 서버용
 │   └── docker-compose.yml
+│   └── monitoring/
+│       ├── prometheus.yml
+│       ├── grafana-datasource.yml
+│       ├── grafana-dashboard.yml
+│       └── grafana-dashboard.json
 ├── k8s/
 │   ├── llm-api-inference.yaml
-│   └── monitoring/  # TODO
-│       ├── prometheus.yaml
-│       └── grafana-dashboard.json
 ├── src/
 │   ├── __init__.py
 │   ├── config.py           # 설정 관리
@@ -67,7 +69,7 @@ llm-serving-practice/
 │   │   │   ├── batch.py
 │   │   │   └── health.py
 │   │   └── middleware/
-│   │       └── metrics.py  # TODO: Prometheus metrics
+│   │       └── metrics.py
 ├── tests/ 
 │   ├── __init__.py
 │   ├── test_vllm_client.py
@@ -102,7 +104,6 @@ llm-serving-practice/
 │  │  Batch Processor                                   │     │
 │  │  • timeout_ms: 100ms 대기                           │     │
 │  │  • max_batch_size: 32개 제한                         │     │
-│  │  • 조건 충족 시 배치 형성                               │     │
 │  └─────────────────────┬──────────────────────────────┘     │
 └────────────────────────┼────────────────────────────────────┘
                          │ batch_chat_completion()
@@ -111,9 +112,8 @@ llm-serving-practice/
 │                    vLLM Engine                              │
 │                 (Continuous Batching)                       │
 │                                                             │
-│  • GPU 병렬 처리로 다중 요청 동시 실행                             │
-│  • 토큰 길이 무관하게 효율적 처리                                  │
-│  • 완료된 요청부터 순차적으로 반환                                  │
+│  • GPU 병렬 처리 통한 다중 요청 동시 실행                           │
+│  • 토큰 길이 무관하게 효율적 처리 + 완료 요청부터 순차 반환              │ 
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -269,15 +269,3 @@ BatchHandler
               └─→ GPU 병렬 처리 (Continuous Batching)
                     └─→ 11.3배 성능 향상 달성
 ```
-
-
-
-
-## TODO
-- [x] vLLM 서버 세팅
-- [x] FastAPI 서버 세팅 및 모델 연동 확인
-- [x] KServe 서빙
-- [x] continuous batching/batch handler 성능 평가
-- [ ] Prometheus + Grafana 모니터링
-- [ ] LangChain Agent 구현
-- [ ] 클라우드 환경 GPU 활용 vLLM 서버 세팅
